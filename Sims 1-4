@@ -1,0 +1,268 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import statistics as s
+import random
+
+def nSidedDie(p): #flips the unfair die a single time and returns the result
+    n = len(p)    
+    cs = np.cumsum(p)
+    cp = np.append(0,cs)
+    r = np.random.rand()
+    for k in range(0,n):
+        if r>cp[k] and r<=cp[k+1]:
+            d=k+1   
+    return d
+
+big_n = 10000
+n = 15
+
+R = [0] *n
+N = [0] *n
+S = [0] *n
+
+
+initial = [1/4, 0, 3/4]
+
+P=[ [1/3, 1/3,1/3], [1/3, 1/6, 1/2], [2/5, 1/5, 2/5]]
+
+#1=R
+#2=N
+#3=S
+
+for num in range(big_n):
+    current = []
+    current.append(nSidedDie(initial))
+    for num in range(n-1):
+        if current[-1] == 1:
+            current.append(nSidedDie(P[0]))
+        elif current[-1] == 2:
+            current.append(nSidedDie(P[1]))
+        elif current[-1] == 3:
+            current.append(nSidedDie(P[2]))
+    
+    for num in range(len(current)):
+        if current[num] == 1:
+            R[num]+=1
+        elif current[num] == 2:
+            N[num]+=1
+        elif current[num] == 3:
+            S[num]+=1
+
+for num in range(len(R)):
+    R[num] = R[num]/big_n
+    N[num] = N[num]/big_n
+    S[num] = S[num]/big_n
+
+bot = []
+for num in range(n):
+    bot.append(num+1)
+    
+
+plt.title("Simulated two-state Markov Chain")
+plt.xlabel("Step Number")
+plt.ylabel("Probability")
+plt.plot(bot, R, 'g--', marker = "o", label='Rain')
+plt.plot(bot, N, 'b--', marker = "o", label='Nice')
+plt.plot(bot, S, 'r--', marker = "o", label='Snow')
+plt.legend(loc="upper right")
+plt.show()
+
+
+#Problem 1.2
+
+#1=R
+#2=N
+#3=S
+
+R = []
+N = []
+S = []
+
+R.append(initial[0])
+N.append(initial[1])
+S.append(initial[2])
+
+R.append(s.mean([P[0][0], P[1][0], P[2][0]]))
+N.append(s.mean([P[0][1], P[1][1], P[2][1]]))
+S.append(s.mean([P[0][2], P[1][2], P[2][2]]))
+
+for num in range(2,15):
+    
+    y = np.linalg.matrix_power(P, num)
+    R.append(s.mean([y[0][0], y[1][0], y[2][0]]))
+    N.append(s.mean([y[0][1], y[1][1], y[2][1]]))
+    S.append(s.mean([y[0][2], y[1][2], y[2][2]]))
+    
+plt.title("Calculated two-state Markov Chain")
+plt.xlabel("Step Number")
+plt.ylabel("Probability")
+plt.plot(bot, R, 'g--', marker = "o", label='Rain')
+plt.plot(bot, N, 'b--', marker = "o", label='Nice')
+plt.plot(bot, S, 'r--', marker = "o", label='Snow')
+plt.legend(loc="upper right")
+plt.show()
+
+#Problem 2
+
+A = []
+B = []
+C = []
+D = []
+E = []
+
+initial  = [1/5, 1/5, 1/5, 1/5, 1/5]
+
+P = [[0, 1, 0, 0, 0], 
+     [1/2, 0, 1/2, 0, 0], 
+     [1/3, 1/3, 0, 0, 1/3], 
+     [1, 0, 0, 0, 0], 
+     [0, 1/3, 1/3, 1/3, 0]]
+
+
+A.append(initial[0])
+B.append(initial[1])
+C.append(initial[2])
+D.append(initial[3])
+E.append(initial[4])
+
+A.append(s.mean([P[0][0], P[1][0], P[2][0], P[3][0], P[4][0]]))
+B.append(s.mean([P[0][1], P[1][1], P[2][1], P[3][1], P[4][1]]))
+C.append(s.mean([P[0][2], P[1][2], P[2][2], P[3][2], P[4][2]]))
+D.append(s.mean([P[0][3], P[1][3], P[2][3], P[3][3], P[4][3]]))
+E.append(s.mean([P[0][4], P[1][4], P[2][4], P[3][4], P[4][4]]))
+
+for num in range(2,15):
+    
+    y = np.linalg.matrix_power(P, num)
+    A.append(s.mean([y[0][0], y[1][0], y[2][0], y[3][0], y[4][0]]))
+    B.append(s.mean([y[0][1], y[1][1], y[2][1], y[3][1], y[4][1]]))
+    C.append(s.mean([y[0][2], y[1][2], y[2][2], y[3][2], y[4][2]]))
+    D.append(s.mean([y[0][3], y[1][3], y[2][3], y[3][3], y[4][3]]))
+    E.append(s.mean([y[0][4], y[1][4], y[2][4], y[3][4], y[4][4]]))
+    
+plt.title("Calculated two-state Markov Chain (Problem 2)")
+plt.xlabel("Step Number")
+plt.ylabel("Probability")
+plt.plot(bot, A, 'g--', marker = "o", label='A')
+plt.plot(bot, B, 'b--', marker = "o", label='B')
+plt.plot(bot, C, 'r--', marker = "o", label='C')
+plt.plot(bot, D, 'k--', marker = "o", label='D')
+plt.plot(bot, E, 'p--', marker = "o", label='E')
+
+plt.legend(loc="upper right")
+plt.show()
+
+print(A[-1], B[-1], C[-1], D[-1], E[-1])
+
+A = []
+B = []
+C = []
+D = []
+E = []
+
+initial  = [0, 0, 0, 0, 1]
+
+A.append(initial[0])
+B.append(initial[1])
+C.append(initial[2])
+D.append(initial[3])
+E.append(initial[4])
+
+A.append(s.mean([P[0][0], P[1][0], P[2][0], P[3][0], P[4][0]]))
+B.append(s.mean([P[0][1], P[1][1], P[2][1], P[3][1], P[4][1]]))
+C.append(s.mean([P[0][2], P[1][2], P[2][2], P[3][2], P[4][2]]))
+D.append(s.mean([P[0][3], P[1][3], P[2][3], P[3][3], P[4][3]]))
+E.append(s.mean([P[0][4], P[1][4], P[2][4], P[3][4], P[4][4]]))
+
+for num in range(2,15):
+    
+    y = np.linalg.matrix_power(P, num)
+    A.append(s.mean([y[0][0], y[1][0], y[2][0], y[3][0], y[4][0]]))
+    B.append(s.mean([y[0][1], y[1][1], y[2][1], y[3][1], y[4][1]]))
+    C.append(s.mean([y[0][2], y[1][2], y[2][2], y[3][2], y[4][2]]))
+    D.append(s.mean([y[0][3], y[1][3], y[2][3], y[3][3], y[4][3]]))
+    E.append(s.mean([y[0][4], y[1][4], y[2][4], y[3][4], y[4][4]]))
+    
+plt.title("Calculated two-state Markov Chain (Problem 2: Modified Init. Vector)")
+plt.xlabel("Step Number")
+plt.ylabel("Probability")
+plt.plot(bot, A, 'g--', marker = "o", label='A')
+plt.plot(bot, B, 'b--', marker = "o", label='B')
+plt.plot(bot, C, 'r--', marker = "o", label='C')
+plt.plot(bot, D, 'k--', marker = "o", label='D')
+plt.plot(bot, E, 'p--', marker = "o", label='E')
+
+plt.legend(loc="upper right")
+plt.show()
+
+print(A[-1], B[-1], C[-1], D[-1], E[-1])
+
+#Problem 3
+
+P = [[1, 0,0,0,0],
+     [1/2, 0, 1/2, 0, 0],
+     [0,1/2, 0, 1/2, 0],
+     [0, 0, 1/2, 0, 1/2],
+     [0,0,0,0,1]
+     ]
+
+start = random.randint(2,3)
+initial = [0]*5
+
+initial[start-1] = 1
+
+current = []
+current.append(nSidedDie(initial)-1)
+for num in range(n-1):
+    if current[-1] == 0:
+        current.append(nSidedDie(P[0])-1)
+    elif current[-1] == 1:
+        current.append(nSidedDie(P[1])-1)
+    elif current[-1] == 2:
+        current.append(nSidedDie(P[2])-1)
+    elif current[-1] == 3:
+        current.append(nSidedDie(P[3])-1)
+    elif current[-1] == 4:
+        current.append(nSidedDie(P[4])-1)
+    
+
+plt.title("Drunkards Walk simulation")
+plt.xlabel("Step Number")
+plt.ylabel("State")
+plt.plot(bot, current, 'b--', marker = "o")
+
+plt.show()
+
+
+#Problem 4
+
+initial = [0, 0, 1, 0, 0]
+
+zero = 0
+
+four = 0
+
+for num in range(big_n):
+    current = []
+    current.append(nSidedDie(initial)-1)
+    for num in range(n-1):
+        if current[-1] == 0:
+            current.append(nSidedDie(P[0])-1)
+        elif current[-1] == 1:
+            current.append(nSidedDie(P[1])-1)
+        elif current[-1] == 2:
+            current.append(nSidedDie(P[2])-1)
+        elif current[-1] == 3:
+            current.append(nSidedDie(P[3])-1)
+        elif current[-1] == 4:
+            current.append(nSidedDie(P[4])-1)
+        
+    if current[-1] == 0:
+        zero+=1
+    elif current[-1] == 4:
+        four+=1
+
+av0 = zero/big_n
+av4 = four/big_n
+
+print(av0, av4)
